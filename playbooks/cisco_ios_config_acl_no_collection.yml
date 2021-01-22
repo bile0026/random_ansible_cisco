@@ -1,0 +1,31 @@
+---
+- name: Basic Cisco ACLs
+  hosts: all
+  gather_facts: false
+  connection: network_cli
+  vars:
+    ansible_network_os: ios
+    acl_name: PROTECT_SNMP
+    allow_statements:
+      - 10 permit 192.168.252.58
+      - 20 permit 192.168.252.7
+      - 30 deny any
+
+  tasks:
+    - name: Gather device information
+      ios_facts:
+        gather_subset: min
+      register: ios_facts
+
+    - name: Install ACL
+      ios_config:
+        lines: "{{ allow_statements }}"
+        parents: "ip access-list standard {{ acl_name }}"
+        before: "no ip access-list standard {{ acl_name }}"
+      notify: save ios
+
+  handlers:
+    - name: save ios
+      ios_command:
+        commands: "write memory"
+      when: not ansible_check_mode
