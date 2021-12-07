@@ -7,10 +7,10 @@
     ansible_network_os: ios
     acl_name: PROTECT_SNMP
     allow_statements:
-      - permit ip 192.168.252.58
-      - permit ip 192.168.252.7
-      - permit tcp 192.168.1.1 any eq 22
-      - deny ip any any log
+      - 10 permit ip 192.168.252.58
+      - 20 permit ip 192.168.252.7
+      - 30 permit tcp 192.168.1.1 any eq 22
+      - 40 deny ip any any log
 
   tasks:
     - name: Gather device information
@@ -22,7 +22,8 @@
       ios_config:
         lines: "{{ allow_statements }}"
         parents: "ip access-list extended {{ acl_name }}"
-        # before: "no ip access-list extended {{ acl_name }}"
+        before: "no ip access-list extended {{ acl_name }}"
+        match: exact
       notify: save ios
 
   handlers:
