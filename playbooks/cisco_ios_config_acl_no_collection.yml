@@ -20,8 +20,8 @@
     - name: Install ACL
       ios_config:
         lines: "{{ allow_statements }}"
-        parents: "ip access-list standard {{ acl_name }}"
-        before: "no ip access-list standard {{ acl_name }}"
+        parents: "ip access-list extended {{ acl_name }}"
+        before: "no ip access-list extended {{ acl_name }}"
       notify: save ios
 
   handlers:
